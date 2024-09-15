@@ -5,9 +5,33 @@ import { UsersModule } from '../users/users.module';
 import { AuthModule } from '../auth/auth.module';
 import { CommentsModule } from '../comments/comments.module';
 import { PostsModule } from '../posts/posts.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import ConfigFile from '../../configurations/index';
 
 @Module({
-  imports: [UsersModule, AuthModule, CommentsModule, PostsModule],
+  imports: [
+    UsersModule,
+    AuthModule,
+    CommentsModule,
+    PostsModule,
+    ConfigModule.forRoot({ load: [ConfigFile] }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (ConfigService: ConfigService) => ({
+        type: 'postgres',
+        host: ConfigService.get('db_host'),
+        port: ConfigService.get('db_port'),
+        username: ConfigService.get('db_user'),
+        password: ConfigService.get('db_password'),
+        database: ConfigService.get('db_name'),
+        entities: [],
+        synchronize: true, // only for developing part
+        autoLoadEntities: true,
+      }),
+      inject: [ConfigService],
+    }),
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
