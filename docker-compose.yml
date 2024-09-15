@@ -1,0 +1,20 @@
+version: '3'
+services:
+  postgresql:
+    image: postgres
+    container_name: docker-network
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_HOST=localhost
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=network
+    command: postgres
+    restart: always
+
+  redis:
+    image: redis:alpine3.14
+    container_name: redis-network
+    ports:
+      - '6379-6379'
