@@ -25,7 +25,7 @@ import ConfigFile from '../../configurations/index';
         username: ConfigService.get('db_user'),
         password: ConfigService.get('db_password'),
         database: ConfigService.get('db_name'),
-        entities: [],
+        entities: [__dirname + '/../**/*.entity{.ts,.js}'],
         synchronize: true, // only for developing part
         autoLoadEntities: true,
       }),
