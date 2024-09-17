@@ -59,7 +59,6 @@ export class UsersService {
 
   async remove(id: number) {
     const user = await this.usersRepository.find({ where: { idUser: id } });
-    console.log(user);
     if (!user) throw new BadRequestException('User doesn`t exist it system');
     return await this.usersRepository.delete(id);
   }
