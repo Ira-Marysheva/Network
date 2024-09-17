@@ -15,7 +15,7 @@ import ConfigFile from '../../configurations/index';
     AuthModule,
     CommentsModule,
     PostsModule,
-    ConfigModule.forRoot({ load: [ConfigFile] }),
+    ConfigModule.forRoot({ load: [ConfigFile], isGlobal: true }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (ConfigService: ConfigService) => ({

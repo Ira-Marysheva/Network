@@ -18,8 +18,9 @@ export class UsersService {
     const existUser = await this.usersRepository.find({
       where: { email: createUserDto.email },
     });
-    if (!existUser)
+    if (existUser.length)
       throw new BadRequestException('User with this email already used!');
+
     const user = await this.usersRepository.save({
       userName: createUserDto.userName,
       email: createUserDto.email,
@@ -28,14 +29,20 @@ export class UsersService {
       // friendList: createUserDto.friendList,
     });
 
-    const token = this.jwtService.sign({ email: createUserDto.email });
+    const token = this.jwtService.sign({
+      email: createUserDto.email,
+    });
 
-    return { user, token };
+    return {
+      user,
+      token,
+    };
   }
 
-  async findAll() {
-    return `This action returns all user`;
-  }
+  //RELATION
+  // async findAll(id: number) {
+  //   return await this.usersRepository.find({ where: { idUser: id } });
+  // }
 
   async findOne(email: string) {
     return await this.usersRepository.findOne({ where: { email } });
@@ -45,10 +52,14 @@ export class UsersService {
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+    const user = await this.usersRepository.find({ where: { idUser: id } });
+    if (!user) throw new BadRequestException('User doesn`t exist it system');
+    return await this.usersRepository.update(id, updateUserDto);
   }
 
   async remove(id: number) {
-    return `This action removes a #${id} user`;
+    const user = await this.usersRepository.find({ where: { idUser: id } });
+    if (!user) throw new BadRequestException('User doesn`t exist it system');
+    return await this.usersRepository.delete(id);
   }
 }
