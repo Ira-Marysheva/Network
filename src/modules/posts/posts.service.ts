@@ -1,15 +1,32 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { Post } from './entities/post.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class PostsService {
-  create(createPostDto: CreatePostDto) {
-    return 'This action adds a new post';
+  constructor(
+    @InjectRepository(Post) private readonly postRepository: Repository<Post>,
+    private readonly userServise: UsersService,
+  ) {}
+
+  async create(id: number, createPostDto: CreatePostDto) {
+    return await this.postRepository.save({
+      text: createPostDto.text,
+      likeQty: createPostDto.likeQty,
+      user: { id },
+    });
   }
 
-  findAll() {
-    return `This action returns all posts`;
+  async findAll(id: number) {
+    const user = await this.userServise.findAll(id);
+    if (!user)
+      throw new BadRequestException('User with this params not exist!');
+
+    return await this.postRepository.find({ where: { user: { id } } });
   }
 
   findOne(id: number) {
