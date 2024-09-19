@@ -23,24 +23,33 @@ export class PostsController {
   create(@Req() req, @Body() createPostDto: CreatePostDto) {
     return this.postsService.create(+req.user.id, createPostDto);
   }
-
+  // get all users post
   @Get()
   @UseGuards(JwtAuthGuard)
   findAll(@Req() req) {
     return this.postsService.findAll(+req.user.id);
   }
-
+  // get one user comment for id comment
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.postsService.findOne(+id);
+  @UseGuards(JwtAuthGuard)
+  findOne(@Req() req, @Param('id') id: string) {
+    return this.postsService.findOne(+req.user.id, +id);
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard)
   update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
     return this.postsService.update(+id, updatePostDto);
   }
 
+  @Patch('like/:id')
+  @UseGuards(JwtAuthGuard)
+  likePost(@Param('id') id: string) {
+    return this.postsService.likePost(+id);
+  }
+
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   remove(@Param('id') id: string) {
     return this.postsService.remove(+id);
   }

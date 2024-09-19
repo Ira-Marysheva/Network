@@ -25,19 +25,39 @@ export class PostsService {
     const user = await this.userServise.findAll(id);
     if (!user)
       throw new BadRequestException('User with this params not exist!');
-
     return await this.postRepository.find({ where: { user: { id } } });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} post`;
+  async findOne(idUser: number, id: number) {
+    const user = await this.userServise.findAll(idUser);
+    if (!user)
+      throw new BadRequestException('User with this params not exist!');
+    return await this.postRepository.findOne({
+      where: { id },
+      relations: { user: true },
+    });
   }
 
-  update(id: number, updatePostDto: UpdatePostDto) {
-    return `This action updates a #${id} post`;
+  async update(id: number, updatePostDto: UpdatePostDto) {
+    const post = await this.postRepository.find({ where: { id } });
+    if (!post) throw new BadRequestException('This post not exist!');
+    return await this.postRepository.update(id, updatePostDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} post`;
+  async likePost(id: number) {
+    const post = await this.postRepository.find({
+      where: { id },
+      relations: { user: true },
+    });
+    if (!post) throw new BadRequestException('This post not exist!');
+    return await this.postRepository.update(id, {
+      likeQty: post[0].likeQty + 1,
+    });
+  }
+
+  async remove(id: number) {
+    const post = await this.postRepository.find({ where: { id } });
+    if (!post) throw new BadRequestException('This post not exist!');
+    return await this.postRepository.delete(id);
   }
 }
