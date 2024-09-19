@@ -21,6 +21,7 @@ export class AuthService {
       throw new BadRequestException(
         'User with this email and password doesn`t exist',
       );
+
     const comparePassword = await bcrypt.compare(password, user.password);
     if (user && comparePassword) return user;
     throw new UnauthorizedException(
@@ -28,11 +29,11 @@ export class AuthService {
     );
   }
   async login(user: LoginUserDto) {
-    const { email, idUser } = user;
+    const { email, id } = user;
     return {
       email,
-      idUser,
-      token: await this.jwtService.sign({ email }),
+      id,
+      token: await this.jwtService.sign({ email, id }),
     };
   }
 
