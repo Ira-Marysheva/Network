@@ -39,26 +39,34 @@ export class UsersService {
     };
   }
 
-  //RELATION
-  // async findAll(id: number) {
-  //   return await this.usersRepository.find({ where: { idUser: id } });
-  // }
+  async findAll(id: number) {
+    return await this.usersRepository.find({
+      where: { id },
+      relations: { post: true },
+    });
+  }
 
   async findOne(email: string) {
-    return await this.usersRepository.findOne({ where: { email } });
+    return await this.usersRepository.findOne({
+      where: { email },
+      relations: { post: true },
+    });
   }
   async findOneById(id: number) {
-    return await this.usersRepository.findOne({ where: { idUser: id } });
+    return await this.usersRepository.findOne({
+      where: { id },
+      relations: { post: true },
+    });
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
-    const user = await this.usersRepository.find({ where: { idUser: id } });
+    const user = await this.usersRepository.find({ where: { id } });
     if (!user) throw new BadRequestException('User doesn`t exist it system');
     return await this.usersRepository.update(id, updateUserDto);
   }
 
   async remove(id: number) {
-    const user = await this.usersRepository.find({ where: { idUser: id } });
+    const user = await this.usersRepository.find({ where: { id } });
     if (!user) throw new BadRequestException('User doesn`t exist it system');
     return await this.usersRepository.delete(id);
   }
