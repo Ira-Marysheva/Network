@@ -21,8 +21,11 @@ export class PostsService {
   }
 
   async findAll(id: number) {
-    const posts = await this.postRepository.find({ where: { user: { id } } });
-    if (!posts)
+    const posts = await this.postRepository.find({
+      where: { user: { id } },
+      relations: { user: true, comment: true },
+    });
+    if (!posts.length)
       throw new BadRequestException('Post with this params not exist!');
     return posts;
   }
@@ -30,6 +33,7 @@ export class PostsService {
   async findOne(idUser: number, id: number) {
     const post = await this.postRepository.findOne({
       where: { id, user: { id: idUser } },
+      relations: { user: true, comment: true },
     });
     if (!post)
       throw new BadRequestException('Post with this params not exist!');
@@ -37,25 +41,31 @@ export class PostsService {
   }
 
   async update(id: number, updatePostDto: UpdatePostDto) {
-    const post = await this.postRepository.find({ where: { id } });
-    if (!post) throw new BadRequestException('This post not exist!');
+    const post = await this.postRepository.find({
+      where: { id },
+      relations: { user: true, comment: true },
+    });
+    if (!post.length) throw new BadRequestException('This post not exist!');
     return await this.postRepository.update(id, updatePostDto);
   }
 
   async likePost(id: number) {
     const post = await this.postRepository.find({
       where: { id },
-      relations: { user: true },
+      relations: { user: true, comment: true },
     });
-    if (!post) throw new BadRequestException('This post not exist!');
+    if (!post.length) throw new BadRequestException('This post not exist!');
     return await this.postRepository.update(id, {
       likeQty: post[0].likeQty + 1,
     });
   }
 
   async remove(id: number) {
-    const post = await this.postRepository.find({ where: { id } });
-    if (!post) throw new BadRequestException('This post not exist!');
+    const post = await this.postRepository.find({
+      where: { id },
+      relations: { user: true, comment: true },
+    });
+    if (!post.length) throw new BadRequestException('This post not exist!');
     return await this.postRepository.delete(id);
   }
 }

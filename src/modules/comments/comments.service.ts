@@ -56,7 +56,7 @@ export class CommentsService {
       where: { id },
       relations: { user: true },
     });
-    if (!comment) throw new BadRequestException('This post not exist!');
+    if (!comment.length) throw new BadRequestException('This post not exist!');
     return await this.commentRepository.update(id, {
       likeQty: comment[0].likeQty + 1,
     });

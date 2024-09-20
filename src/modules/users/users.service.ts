@@ -17,6 +17,7 @@ export class UsersService {
   async create(createUserDto: CreateUserDto) {
     const existUser = await this.usersRepository.find({
       where: { email: createUserDto.email },
+      relations: { comment: true, post: true },
     });
     if (existUser.length)
       throw new BadRequestException('User with this email already used!');
@@ -42,32 +43,40 @@ export class UsersService {
   async findAll(id: number) {
     return await this.usersRepository.find({
       where: { id },
-      relations: { post: true },
+      relations: { post: true, comment: true },
     });
   }
 
   async findOne(email: string) {
     return await this.usersRepository.findOne({
       where: { email },
-      relations: { post: true },
+      relations: { post: true, comment: true },
     });
   }
   async findOneById(id: number) {
     return await this.usersRepository.findOne({
       where: { id },
-      relations: { post: true },
+      relations: { post: true, comment: true },
     });
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
-    const user = await this.usersRepository.find({ where: { id } });
-    if (!user) throw new BadRequestException('User doesn`t exist it system');
+    const user = await this.usersRepository.find({
+      where: { id },
+      relations: { comment: true, post: true },
+    });
+    if (!user.length)
+      throw new BadRequestException('User doesn`t exist it system');
     return await this.usersRepository.update(id, updateUserDto);
   }
 
   async remove(id: number) {
-    const user = await this.usersRepository.find({ where: { id } });
-    if (!user) throw new BadRequestException('User doesn`t exist it system');
+    const user = await this.usersRepository.find({
+      where: { id },
+      relations: { comment: true, post: true },
+    });
+    if (!user.length)
+      throw new BadRequestException('User doesn`t exist it system');
     return await this.usersRepository.delete(id);
   }
 }
