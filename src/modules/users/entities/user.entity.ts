@@ -1,5 +1,6 @@
 import { IsNotEmpty, IsNumber } from 'class-validator';
 import { Post } from 'src/modules/posts/entities/post.entity';
+import { Comment } from 'src/modules/comments/entities/comment.entity';
 import {
   Column,
   Entity,
@@ -27,12 +28,6 @@ export default class User {
   @Column()
   password: string;
 
-  @IsNotEmpty()
-  @IsNumber()
-  @OneToMany(() => Post, (posts) => posts.user, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'idUser' })
-  post: Post[];
-
   // @Column({ nullable: true })post
   // friendList: String[];
 
@@ -42,6 +37,17 @@ export default class User {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  //user post
   // user role
+
+  @OneToMany(() => Comment, (comments) => comments.user, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'idComment' })
+  comment: Comment[];
+
+  @IsNotEmpty()
+  @IsNumber()
+  @OneToMany(() => Post, (posts) => posts.user, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'idPost' })
+  post: Post[];
 }
