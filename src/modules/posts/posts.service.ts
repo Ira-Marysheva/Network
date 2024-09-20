@@ -10,7 +10,6 @@ import { UsersService } from '../users/users.service';
 export class PostsService {
   constructor(
     @InjectRepository(Post) private readonly postRepository: Repository<Post>,
-    private readonly userServise: UsersService,
   ) {}
 
   async create(id: number, createPostDto: CreatePostDto) {
@@ -22,20 +21,19 @@ export class PostsService {
   }
 
   async findAll(id: number) {
-    const user = await this.userServise.findAll(id);
-    if (!user)
-      throw new BadRequestException('User with this params not exist!');
-    return await this.postRepository.find({ where: { user: { id } } });
+    const posts = await this.postRepository.find({ where: { user: { id } } });
+    if (!posts)
+      throw new BadRequestException('Post with this params not exist!');
+    return posts;
   }
 
   async findOne(idUser: number, id: number) {
-    const user = await this.userServise.findAll(idUser);
-    if (!user)
-      throw new BadRequestException('User with this params not exist!');
-    return await this.postRepository.findOne({
-      where: { id },
-      relations: { user: true },
+    const post = await this.postRepository.findOne({
+      where: { id, user: { id: idUser } },
     });
+    if (!post)
+      throw new BadRequestException('Post with this params not exist!');
+    return;
   }
 
   async update(id: number, updatePostDto: UpdatePostDto) {
