@@ -10,6 +10,7 @@ import { UsersService } from '../users/users.service';
 export class PostsService {
   constructor(
     @InjectRepository(Post) private readonly postRepository: Repository<Post>,
+    private readonly usersService: UsersService,
   ) {}
 
   async create(id: number, createPostDto: CreatePostDto) {
@@ -49,15 +50,28 @@ export class PostsService {
     return await this.postRepository.update(id, updatePostDto);
   }
 
-  async likePost(id: number) {
+  async likePost(idUser: number, idPost: number) {
     const post = await this.postRepository.find({
-      where: { id },
-      relations: { user: true, comment: true },
+      where: { id: idPost },
+      // relations: { user: true, comment: true },
     });
     if (!post.length) throw new BadRequestException('This post not exist!');
-    return await this.postRepository.update(id, {
-      likeQty: post[0].likeQty + 1,
-    });
+
+    const user = await this.usersService.findAll(idUser);
+    if (!user.length) throw new BadRequestException('This user not exist!');
+
+    // Ініціалізуємо userLiked, якщо він не існує
+    if (!post[0].userLiked) {
+      post[0].userLiked = [];
+    }
+    console.log(post[0].userLiked);
+    // Додаємо користувача до списку лайків, якщо він ще не лайкнув пост
+    // if (!post[0].userLiked.some((u) => u.id === user[0].id)) {
+    //   post[0].userLiked.push(user[0]);
+    //   post[0].likeQty += 1; // Збільшуємо кількість лайків
+    //   await this.postRepository.save(post);
+    // }
+    // return post;
   }
 
   async remove(id: number) {

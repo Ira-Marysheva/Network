@@ -43,7 +43,7 @@ export class UsersService {
   async findAll(id: number) {
     return await this.usersRepository.find({
       where: { id },
-      relations: { post: true, comment: true },
+      // relations: { post: true, comment: true },
     });
   }
 

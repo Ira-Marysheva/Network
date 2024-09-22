@@ -8,6 +8,8 @@ import {
   PrimaryGeneratedColumn,
   JoinColumn,
   OneToMany,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { IsNotEmpty, IsNumber } from 'class-validator';
 
@@ -37,4 +39,12 @@ export class Post {
   @ManyToOne(() => User, (users) => users.post)
   @JoinColumn({ name: 'idUser' })
   user: User;
+
+  @ManyToMany(() => User, (posts) => posts.postLiked, { cascade: true })
+  @JoinTable({
+    name: 'User_liked_post',
+    joinColumn: { name: 'postId', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'userId', referencedColumnName: 'id' },
+  })
+  userLiked: User[];
 }

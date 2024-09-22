@@ -9,6 +9,7 @@ import {
   UpdateDateColumn,
   OneToMany,
   JoinColumn,
+  ManyToMany,
 } from 'typeorm';
 
 @Entity()
@@ -50,4 +51,7 @@ export default class User {
   @OneToMany(() => Post, (posts) => posts.user, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'idPost' })
   post: Post[];
+
+  @ManyToMany(() => Post, (posts) => posts.userLiked)
+  postLiked: Post[];
 }

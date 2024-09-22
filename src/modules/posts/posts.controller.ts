@@ -44,8 +44,8 @@ export class PostsController {
 
   @Patch('like/:id')
   @UseGuards(JwtAuthGuard)
-  likePost(@Param('id') id: string) {
-    return this.postsService.likePost(+id);
+  likePost(@Req() req, @Param('id') id: string) {
+    return this.postsService.likePost(+req.user.id, +id);
   }
 
   @Delete(':id')
