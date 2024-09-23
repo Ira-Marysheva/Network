@@ -14,7 +14,7 @@ import {
 import { IsNotEmpty, IsNumber } from 'class-validator';
 
 @Entity()
-export class Post {
+export class Posts {
   @PrimaryGeneratedColumn({ name: 'idPost' })
   id: number;
 
@@ -24,7 +24,6 @@ export class Post {
   @Column({ nullable: true, default: 0 })
   likeQty: number;
   // teg
-  //comment
 
   @CreateDateColumn()
   timeCteated: Date;

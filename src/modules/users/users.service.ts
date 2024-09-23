@@ -19,6 +19,14 @@ export class UsersService {
   async create(createUserDto: CreateUserDto): Promise<AuthAnswerDTO> {
     //find in exist user user with input param
     const existUser = await this.usersRepository.find({
+      select: {
+        id: true,
+        userName: true,
+        email: true,
+        gender: true,
+        createdAt: true,
+        updatedAt: true,
+      },
       where: { email: createUserDto.email },
       relations: { comment: true, post: true },
     });
@@ -37,6 +45,14 @@ export class UsersService {
 
     //create values for authorization
     const user = await this.usersRepository.findOne({
+      select: {
+        id: true,
+        userName: true,
+        email: true,
+        gender: true,
+        createdAt: true,
+        updatedAt: true,
+      },
       where: { email: createUserDto.email },
     });
     const token = this.jwtService.sign({
@@ -48,11 +64,28 @@ export class UsersService {
       token,
     };
   }
-
+  async findOneForAuth(email: string): Promise<User> {
+    try {
+      return await this.usersRepository.findOne({
+        where: { email },
+        relations: { post: true, comment: true },
+      });
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
   //find one user for email
   async findOne(email: string): Promise<User> {
     try {
       return await this.usersRepository.findOne({
+        select: {
+          id: true,
+          userName: true,
+          email: true,
+          gender: true,
+          createdAt: true,
+          updatedAt: true,
+        },
         where: { email },
         relations: { post: true, comment: true },
       });
@@ -65,6 +98,14 @@ export class UsersService {
   async findOneById(id: number): Promise<User> {
     try {
       return await this.usersRepository.findOne({
+        select: {
+          id: true,
+          userName: true,
+          email: true,
+          gender: true,
+          createdAt: true,
+          updatedAt: true,
+        },
         where: { id },
         relations: { post: true, comment: true },
       });
@@ -79,6 +120,14 @@ export class UsersService {
     updateUserDto: UpdateUserDto,
   ): Promise<UpdateResult> {
     const user = await this.usersRepository.find({
+      select: {
+        id: true,
+        userName: true,
+        email: true,
+        gender: true,
+        createdAt: true,
+        updatedAt: true,
+      },
       where: { id },
       relations: { comment: true, post: true },
     });
@@ -90,6 +139,14 @@ export class UsersService {
   //delete exist user
   async remove(id: number): Promise<DeleteResult> {
     const user = await this.usersRepository.find({
+      select: {
+        id: true,
+        userName: true,
+        email: true,
+        gender: true,
+        createdAt: true,
+        updatedAt: true,
+      },
       where: { id },
       relations: { comment: true, post: true },
     });

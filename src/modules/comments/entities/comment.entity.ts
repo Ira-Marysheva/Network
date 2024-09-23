@@ -1,5 +1,5 @@
 import User from 'src/modules/users/entities/user.entity';
-import { Post } from 'src/modules/posts/entities/post.entity';
+import { Posts } from 'src/modules/posts/entities/post.entity';
 import {
   Column,
   Entity,
@@ -31,9 +31,9 @@ export class Comment {
   @JoinColumn({ name: 'idUser' })
   user: User;
 
-  @ManyToOne(() => Post, (post) => post.comment)
+  @ManyToOne(() => Posts, (post) => post.comment)
   @JoinColumn({ name: 'idPost' })
-  post: Post;
+  post: Posts;
 
   @ManyToMany(() => User, (user) => user.commentLiked)
   @JoinTable({

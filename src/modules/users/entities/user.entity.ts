@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsNumber } from 'class-validator';
-import { Post } from 'src/modules/posts/entities/post.entity';
+import { Posts } from 'src/modules/posts/entities/post.entity';
 import { Comment } from 'src/modules/comments/entities/comment.entity';
 import {
   Column,
@@ -26,7 +26,7 @@ export default class User {
   @Column({ unique: true })
   email: string;
 
-  @Column({ select: false })
+  @Column()
   password: string;
 
   // @Column({ nullable: true })post
@@ -48,12 +48,12 @@ export default class User {
 
   @IsNotEmpty()
   @IsNumber()
-  @OneToMany(() => Post, (posts) => posts.user, { onDelete: 'CASCADE' })
+  @OneToMany(() => Posts, (posts) => posts.user, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'idPost' })
-  post: Post[];
+  post: Posts[];
 
-  @ManyToMany(() => Post, (posts) => posts.userLiked)
-  postLiked: Post[];
+  @ManyToMany(() => Posts, (posts) => posts.userLiked)
+  postLiked: Posts[];
 
   @ManyToMany(() => Comment, (comment) => comment.userLiked)
   commentLiked: Comment[];
