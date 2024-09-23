@@ -42,10 +42,24 @@ export class PostsController {
     return this.postsService.update(+id, updatePostDto);
   }
 
+  // get list who like post
+  @Get('like/:id')
+  @UseGuards(JwtAuthGuard)
+  getAllLike(@Req() req, @Param('id') id: string) {
+    return this.postsService.getAllLike(+req.user.id, +id);
+  }
+
+  //liked
   @Patch('like/:id')
   @UseGuards(JwtAuthGuard)
   likePost(@Req() req, @Param('id') id: string) {
-    return this.postsService.likePost(+req.user.id, +id);
+    return this.postsService.like(+req.user.id, +id);
+  }
+  //delete like
+  @Patch('likeDelete/:id')
+  @UseGuards(JwtAuthGuard)
+  deleteLikePost(@Req() req, @Param('id') id: string) {
+    return this.postsService.deleteLike(+req.user.id, +id);
   }
 
   @Delete(':id')

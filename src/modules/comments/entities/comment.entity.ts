@@ -7,6 +7,8 @@ import {
   CreateDateColumn,
   JoinColumn,
   ManyToOne,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 
 @Entity()
@@ -32,4 +34,12 @@ export class Comment {
   @ManyToOne(() => Post, (post) => post.comment)
   @JoinColumn({ name: 'idPost' })
   post: Post;
+
+  @ManyToMany(() => User, (user) => user.commentLiked)
+  @JoinTable({
+    name: 'User_liked_comment',
+    joinColumn: { name: 'commentId', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'userId', referencedColumnName: 'id' },
+  })
+  userLiked: User[];
 }

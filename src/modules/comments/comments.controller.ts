@@ -46,10 +46,24 @@ export class CommentsController {
     return this.commentsService.update(+id, updateCommentDto);
   }
 
+  // get list who like comment
+  @Get('like/:id')
+  @UseGuards(JwtAuthGuard)
+  getAllLike(@Req() req, @Param('id') id: string) {
+    return this.commentsService.getAllLike(+req.user.id, +id);
+  }
+
+  //liked
   @Patch('like/:id')
   @UseGuards(JwtAuthGuard)
-  likePost(@Param('id') id: string) {
-    return this.commentsService.likePost(+id);
+  likePost(@Req() req, @Param('id') id: string) {
+    return this.commentsService.like(+req.user.id, +id);
+  }
+  //delete like
+  @Patch('likeDelete/:id')
+  @UseGuards(JwtAuthGuard)
+  deleteLikePost(@Req() req, @Param('id') id: string) {
+    return this.commentsService.deleteLike(+req.user.id, +id);
   }
 
   @Delete(':id')

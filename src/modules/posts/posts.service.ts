@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { Post } from './entities/post.entity';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersService } from '../users/users.service';
 
@@ -50,28 +50,63 @@ export class PostsService {
     return await this.postRepository.update(id, updatePostDto);
   }
 
-  async likePost(idUser: number, idPost: number) {
-    const post = await this.postRepository.find({
+  async getAllLike(idUser: number, idPost: number) {
+    const user = await this.usersService.findAll(idUser);
+    if (!user.length) throw new BadRequestException('This user not exist!');
+
+    const likedPost = await this.postRepository.findOne({
+      where: { id: idPost, userLiked: [{ id: idUser }] },
+      relations: { userLiked: true },
+    });
+    console.log(likedPost);
+    if (!likedPost) throw new BadRequestException('This post not exist!');
+    return likedPost;
+  }
+
+  async like(idUser: number, idPost: number) {
+    const post = await this.postRepository.findOne({
       where: { id: idPost },
+      relations: { userLiked: true },
       // relations: { user: true, comment: true },
     });
-    if (!post.length) throw new BadRequestException('This post not exist!');
+    if (!post) throw new BadRequestException('This post not exist!');
 
     const user = await this.usersService.findAll(idUser);
     if (!user.length) throw new BadRequestException('This user not exist!');
 
-    // Ініціалізуємо userLiked, якщо він не існує
-    if (!post[0].userLiked) {
-      post[0].userLiked = [];
+    const likedPost = await this.postRepository.findOne({
+      where: { id: idPost, userLiked: [{ id: idUser }] },
+      relations: { user: true, userLiked: true },
+    });
+    console.log(likedPost);
+    if (likedPost) throw new BadRequestException('User has already liked post');
+
+    console.log('post.userLiked', post.userLiked);
+
+    post.likeQty = post.likeQty + 1;
+    post.userLiked = [...post.userLiked, user[0]];
+    await this.postRepository.save(post);
+
+    return post;
+  }
+
+  async deleteLike(idUser: number, idPost: number) {
+    const user = await this.usersService.findAll(idUser);
+    if (!user.length) throw new BadRequestException('This user not exist!');
+
+    const likedPost = await this.postRepository.findOne({
+      where: { id: idPost, userLiked: [{ id: idUser }] },
+      relations: { user: true, userLiked: true },
+    });
+    if (!likedPost) throw new BadRequestException('This post not exist!');
+    if (likedPost) {
+      likedPost.userLiked = likedPost.userLiked.filter((user) => {
+        return user.id !== idUser;
+      });
+      likedPost.likeQty = likedPost.likeQty - 1;
+      return this.postRepository.save(likedPost);
     }
-    console.log(post[0].userLiked);
-    // Додаємо користувача до списку лайків, якщо він ще не лайкнув пост
-    // if (!post[0].userLiked.some((u) => u.id === user[0].id)) {
-    //   post[0].userLiked.push(user[0]);
-    //   post[0].likeQty += 1; // Збільшуємо кількість лайків
-    //   await this.postRepository.save(post);
-    // }
-    // return post;
+    throw new BadRequestException('something happening wrong');
   }
 
   async remove(id: number) {

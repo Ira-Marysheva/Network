@@ -54,4 +54,7 @@ export default class User {
 
   @ManyToMany(() => Post, (posts) => posts.userLiked)
   postLiked: Post[];
+
+  @ManyToMany(() => Comment, (comment) => comment.userLiked)
+  commentLiked: Comment[];
 }
