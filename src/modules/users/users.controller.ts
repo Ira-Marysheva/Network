@@ -14,48 +14,43 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-// import { LikeService } from '../like/like.service';
+import { AuthAnswerDTO } from './response';
+import User from './entities/user.entity';
+import { DeleteResult, UpdateResult } from 'typeorm';
 
 @Controller('users')
 export class UsersController {
-  constructor(
-    private readonly usersService: UsersService,
-    // private readonly likeService: LikeService,
-  ) {}
+  constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
+  create(@Body() createUserDto: CreateUserDto): Promise<AuthAnswerDTO> {
     return this.usersService.create(createUserDto);
   }
 
-  @Get()
-  @UseGuards(JwtAuthGuard)
-  findAll(@Req() req) {
-    return this.usersService.findAll(+req.user.id);
-  }
+  // @Get()
+  // @UseGuards(JwtAuthGuard)
+  // findAll(@Req() req) {
+  //   return this.usersService.findAll(+req.user.id);
+  // }
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)
-  findOne(@Param('id') id: number) {
+  findOne(@Param('id') id: number): Promise<User> {
     return this.usersService.findOneById(id);
   }
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
-  update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
+  update(
+    @Param('id') id: number,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<UpdateResult> {
     return this.usersService.update(id, updateUserDto);
   }
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
-  remove(@Param('id') id: number) {
+  remove(@Param('id') id: number): Promise<DeleteResult> {
     return this.usersService.remove(id);
-  }
-
-  @Patch('like/:id')
-  @UseGuards(JwtAuthGuard)
-  like(@Req() req) {
-    const user = this.usersService.findAll(+req.user.id);
-    if (!user) throw new BadRequestException('This user not exist!!!');
   }
 }

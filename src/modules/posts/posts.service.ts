@@ -51,8 +51,8 @@ export class PostsService {
   }
 
   async getAllLike(idUser: number, idPost: number) {
-    const user = await this.usersService.findAll(idUser);
-    if (!user.length) throw new BadRequestException('This user not exist!');
+    const user = await this.usersService.findOneById(idUser);
+    if (!user) throw new BadRequestException('This user not exist!');
 
     const likedPost = await this.postRepository.findOne({
       where: { id: idPost, userLiked: [{ id: idUser }] },
@@ -71,8 +71,8 @@ export class PostsService {
     });
     if (!post) throw new BadRequestException('This post not exist!');
 
-    const user = await this.usersService.findAll(idUser);
-    if (!user.length) throw new BadRequestException('This user not exist!');
+    const user = await this.usersService.findOneById(idUser);
+    if (!user) throw new BadRequestException('This user not exist!');
 
     const likedPost = await this.postRepository.findOne({
       where: { id: idPost, userLiked: [{ id: idUser }] },
@@ -91,8 +91,8 @@ export class PostsService {
   }
 
   async deleteLike(idUser: number, idPost: number) {
-    const user = await this.usersService.findAll(idUser);
-    if (!user.length) throw new BadRequestException('This user not exist!');
+    const user = await this.usersService.findOneById(idUser);
+    if (!user) throw new BadRequestException('This user not exist!');
 
     const likedPost = await this.postRepository.findOne({
       where: { id: idPost, userLiked: [{ id: idUser }] },

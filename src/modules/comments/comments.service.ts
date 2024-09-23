@@ -58,8 +58,8 @@ export class CommentsService {
   }
 
   async getAllLike(idUser: number, idComment: number) {
-    const user = await this.usersService.findAll(idUser);
-    if (!user.length) throw new BadRequestException('This user not exist!');
+    const user = await this.usersService.findOneById(idUser);
+    if (!user) throw new BadRequestException('This user not exist!');
 
     const likedComment = await this.commentRepository.findOne({
       where: { id: idComment, userLiked: [{ id: idUser }] },
@@ -79,8 +79,8 @@ export class CommentsService {
     });
     if (!comment) throw new BadRequestException('This comment not exist!');
 
-    const user = await this.usersService.findAll(idUser);
-    if (!user.length) throw new BadRequestException('This user not exist!');
+    const user = await this.usersService.findOneById(idUser);
+    if (!user) throw new BadRequestException('This user not exist!');
 
     const likedComment = await this.commentRepository.findOne({
       where: { id: idComment, userLiked: [{ id: idUser }] },
@@ -100,8 +100,8 @@ export class CommentsService {
   }
 
   async deleteLike(idUser: number, idComment: number) {
-    const user = await this.usersService.findAll(idUser);
-    if (!user.length) throw new BadRequestException('This user not exist!');
+    const user = await this.usersService.findOneById(idUser);
+    if (!user) throw new BadRequestException('This user not exist!');
 
     const likedComment = await this.commentRepository.findOne({
       where: { id: idComment, userLiked: [{ id: idUser }] },
