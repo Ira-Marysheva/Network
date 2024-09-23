@@ -3,10 +3,10 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import User from './entities/user.entity';
-import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { AuthAnswerDTO, PublicUserDTO } from './response/index';
+import { AuthAnswerDTO } from './response/index';
 
 @Injectable()
 export class UsersService {
@@ -115,10 +115,7 @@ export class UsersService {
   }
 
   // update exist user
-  async update(
-    id: number,
-    updateUserDto: UpdateUserDto,
-  ): Promise<UpdateResult> {
+  async update(id: number, updateUserDto: UpdateUserDto): Promise<boolean> {
     const user = await this.usersRepository.find({
       select: {
         id: true,
@@ -133,11 +130,12 @@ export class UsersService {
     });
     if (!user.length)
       throw new BadRequestException('User doesn`t exist it system');
-    return await this.usersRepository.update(id, updateUserDto);
+    await this.usersRepository.update(id, updateUserDto);
+    return true;
   }
 
   //delete exist user
-  async remove(id: number): Promise<DeleteResult> {
+  async remove(id: number): Promise<boolean> {
     const user = await this.usersRepository.find({
       select: {
         id: true,
@@ -152,6 +150,7 @@ export class UsersService {
     });
     if (!user.length)
       throw new BadRequestException('User doesn`t exist it system');
-    return await this.usersRepository.delete(id);
+    await this.usersRepository.delete(id);
+    return true;
   }
 }

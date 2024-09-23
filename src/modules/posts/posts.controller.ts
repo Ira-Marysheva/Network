@@ -14,7 +14,6 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Posts } from './entities/post.entity';
-import { UpdateResult } from 'typeorm';
 
 @Controller('posts')
 export class PostsController {
@@ -46,7 +45,7 @@ export class PostsController {
   update(
     @Param('id') id: string,
     @Body() updatePostDto: UpdatePostDto,
-  ): Promise<UpdateResult> {
+  ): Promise<boolean> {
     return this.postsService.update(+id, updatePostDto);
   }
 

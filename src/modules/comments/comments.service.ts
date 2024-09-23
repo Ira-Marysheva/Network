@@ -14,20 +14,26 @@ export class CommentsService {
     private readonly usersService: UsersService,
   ) {}
 
+  // create new comment
   async create(
-    id: number,
+    idUser: number,
     idComment: number,
     createCommentDto: CreateCommentDto,
-  ) {
-    return await this.commentRepository.save({
-      text: createCommentDto.text,
-      likeQty: createCommentDto.likeQty,
-      user: { id },
-      post: { id: idComment },
-    });
+  ): Promise<Comment> {
+    try {
+      return await this.commentRepository.save({
+        text: createCommentDto.text,
+        likeQty: createCommentDto.likeQty,
+        user: { id: idUser },
+        post: { id: idComment },
+      });
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
-  async findAll(idComment: number) {
+  //get all comment in post
+  async findAll(idComment: number): Promise<Comment[]> {
     const postComment = await this.commentRepository.find({
       where: { post: { id: idComment } },
       relations: { user: true, post: true },
@@ -37,77 +43,88 @@ export class CommentsService {
     return postComment;
   }
 
-  async findOne(id: number) {
-    const comment = await this.commentRepository.find({
+  // get one for id comment
+  async findOne(id: number): Promise<Comment> {
+    const comment = await this.commentRepository.findOne({
       where: { id },
       relations: { user: true, post: true },
     });
-    if (!comment.length)
-      throw new BadRequestException('This comment not exist');
+    if (!comment) throw new BadRequestException('This comment not exist');
     return comment;
   }
 
-  async update(id: number, updateCommentDto: UpdateCommentDto) {
+  // update exist comment
+  async update(
+    id: number,
+    updateCommentDto: UpdateCommentDto,
+  ): Promise<boolean> {
     const comment = await this.commentRepository.find({
       where: { id },
       relations: { user: true, post: true },
     });
     if (!comment.length)
       throw new BadRequestException('This comment not exist');
-    return await this.commentRepository.update(id, updateCommentDto);
+    await this.commentRepository.update(id, updateCommentDto);
+    return true;
   }
 
-  async getAllLike(idUser: number, idComment: number) {
+  // delete exist comment
+  async remove(id: number): Promise<boolean> {
+    const comment = await this.commentRepository.findOne({
+      where: { id },
+      relations: { user: true, post: true },
+    });
+    if (!comment) throw new BadRequestException('This comment not exist');
+    await this.commentRepository.delete(id);
+    return true;
+  }
+
+  async confirmExisting(idUser: number, idComment: number) {
+    //confirm exist user
     const user = await this.usersService.findOneById(idUser);
     if (!user) throw new BadRequestException('This user not exist!');
+    // confirm exist necessary comment
 
-    const likedComment = await this.commentRepository.findOne({
-      where: { id: idComment, userLiked: [{ id: idUser }] },
-      relations: { userLiked: true },
-    });
-    console.log(likedComment);
-    if (!likedComment)
-      throw new BadRequestException('This like to comment not exist!');
-    return likedComment;
-  }
-
-  async like(idUser: number, idComment: number) {
     const comment = await this.commentRepository.findOne({
       where: { id: idComment },
       relations: { userLiked: true },
-      // relations: { user: true, comment: true },
     });
-    if (!comment) throw new BadRequestException('This comment not exist!');
-
-    const user = await this.usersService.findOneById(idUser);
-    if (!user) throw new BadRequestException('This user not exist!');
+    if (!comment) throw new BadRequestException('This Comment not exist!');
+    //confirm existing liked Comment
 
     const likedComment = await this.commentRepository.findOne({
       where: { id: idComment, userLiked: [{ id: idUser }] },
-      relations: { user: true, userLiked: true },
+      relations: { userLiked: true },
     });
-    console.log(likedComment);
-    if (likedComment)
-      throw new BadRequestException('User has already liked comment');
 
-    console.log('comment.userLiked', comment.userLiked);
+    return { likedComment, comment, user };
+  }
 
-    comment.likeQty = comment.likeQty + 1;
-    comment.userLiked = [...comment.userLiked, user[0]];
-    await this.commentRepository.save(comment);
-
+  // get list of user who liked comment
+  async getAllLike(idUser: number, idComment: number): Promise<Comment> {
+    const { comment } = await this.confirmExisting(idUser, idComment);
+    if (!comment)
+      throw new BadRequestException('This like to comment not exist!');
     return comment;
   }
 
-  async deleteLike(idUser: number, idComment: number) {
-    const user = await this.usersService.findOneById(idUser);
-    if (!user) throw new BadRequestException('This user not exist!');
+  //liked comment
+  async like(idUser: number, idComment: number): Promise<Comment> {
+    const { likedComment, comment, user } = await this.confirmExisting(
+      idUser,
+      idComment,
+    );
+    if (likedComment)
+      throw new BadRequestException('User has already liked comment');
+    comment.likeQty = comment.likeQty + 1;
+    comment.userLiked = [...comment.userLiked, user];
+    await this.commentRepository.save(comment);
+    return comment;
+  }
 
-    const likedComment = await this.commentRepository.findOne({
-      where: { id: idComment, userLiked: [{ id: idUser }] },
-      relations: { user: true, userLiked: true },
-    });
-    if (!likedComment) throw new BadRequestException('This comment not exist!');
+  // delete like in comment
+  async deleteLike(idUser: number, idComment: number): Promise<Comment> {
+    const { likedComment } = await this.confirmExisting(idUser, idComment);
     if (likedComment) {
       likedComment.userLiked = likedComment.userLiked.filter((user) => {
         return user.id !== idUser;
@@ -115,15 +132,6 @@ export class CommentsService {
       likedComment.likeQty = likedComment.likeQty - 1;
       return this.commentRepository.save(likedComment);
     }
-    throw new BadRequestException('something happening wrong');
-  }
-  async remove(id: number) {
-    const comment = await this.commentRepository.find({
-      where: { id },
-      relations: { user: true, post: true },
-    });
-    if (!comment.length)
-      throw new BadRequestException('This comment not exist');
-    return await this.commentRepository.delete(id);
+    throw new BadRequestException('This comment not exist!');
   }
 }

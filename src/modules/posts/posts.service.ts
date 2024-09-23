@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { Posts } from './entities/post.entity';
-import { Repository, UpdateResult } from 'typeorm';
+import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersService } from '../users/users.service';
 
@@ -47,16 +47,25 @@ export class PostsService {
   }
 
   // update user`s post
-  async update(
-    id: number,
-    updatePostDto: UpdatePostDto,
-  ): Promise<UpdateResult> {
+  async update(id: number, updatePostDto: UpdatePostDto): Promise<boolean> {
     const post = await this.postRepository.find({
       where: { id },
       relations: { user: true, comment: true },
     });
     if (!post.length) throw new BadRequestException('This post not exist!');
-    return await this.postRepository.update(id, updatePostDto);
+    await this.postRepository.update(id, updatePostDto);
+    return true;
+  }
+
+  // delete exist users post
+  async remove(id: number): Promise<boolean> {
+    const post = await this.postRepository.find({
+      where: { id },
+      relations: { user: true, comment: true },
+    });
+    if (!post.length) throw new BadRequestException('This post not exist!');
+    await this.postRepository.delete(id);
+    return true;
   }
 
   async confirmExisting(idUser: number, idPost: number) {
@@ -111,16 +120,5 @@ export class PostsService {
       return this.postRepository.save(likedPost);
     }
     throw new BadRequestException('something happening wrong');
-  }
-
-  // delete exist users post
-  async remove(id: number) {
-    const post = await this.postRepository.find({
-      where: { id },
-      relations: { user: true, comment: true },
-    });
-    if (!post.length) throw new BadRequestException('This post not exist!');
-    await this.postRepository.delete(id);
-    return true;
   }
 }

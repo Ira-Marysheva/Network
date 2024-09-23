@@ -13,8 +13,6 @@ import {
 
 @Entity()
 export class Comment {
-  //iduser
-
   @PrimaryGeneratedColumn({ name: 'idComment' })
   id: number;
 

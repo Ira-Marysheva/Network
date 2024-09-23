@@ -44,13 +44,13 @@ export class UsersController {
   update(
     @Param('id') id: number,
     @Body() updateUserDto: UpdateUserDto,
-  ): Promise<UpdateResult> {
+  ): Promise<boolean> {
     return this.usersService.update(id, updateUserDto);
   }
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
-  remove(@Param('id') id: number): Promise<DeleteResult> {
+  remove(@Param('id') id: number): Promise<boolean> {
     return this.usersService.remove(id);
   }
 }
