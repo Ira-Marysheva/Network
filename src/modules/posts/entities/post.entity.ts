@@ -12,33 +12,41 @@ import {
   JoinTable,
 } from 'typeorm';
 import { IsNotEmpty, IsNumber } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Entity()
 export class Posts {
+  @ApiProperty()
   @PrimaryGeneratedColumn({ name: 'idPost' })
   id: number;
 
+  @ApiProperty()
   @Column()
   text: string;
 
+  @ApiProperty({ nullable: true, default: 0 })
   @Column({ nullable: true, default: 0 })
   likeQty: number;
   // teg
 
+  @ApiProperty()
   @CreateDateColumn()
   timeCteated: Date;
 
+  @ApiProperty()
   @OneToMany(() => Comment, (comments) => comments.post, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'idComment' })
   comment: Comment[];
 
+  // @ApiProperty()
   @IsNotEmpty()
   @ManyToOne(() => User, (users) => users.post)
   @JoinColumn({ name: 'idUser' })
   user: User;
 
+  @ApiProperty()
   @ManyToMany(() => User, (posts) => posts.postLiked, { cascade: true })
   @JoinTable({
     name: 'User_liked_post',

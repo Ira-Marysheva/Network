@@ -7,8 +7,6 @@ import {
   Param,
   Delete,
   UseGuards,
-  Req,
-  BadRequestException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -16,12 +14,19 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { AuthAnswerDTO } from './response';
 import User from './entities/user.entity';
-import { DeleteResult, UpdateResult } from 'typeorm';
+import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  // create new user
+  @ApiTags('API-Users')
+  @ApiResponse({
+    status: 201,
+    type: CreateUserDto,
+    description: 'Create new user',
+  })
   @Post()
   create(@Body() createUserDto: CreateUserDto): Promise<AuthAnswerDTO> {
     return this.usersService.create(createUserDto);
@@ -33,12 +38,27 @@ export class UsersController {
   //   return this.usersService.findAll(+req.user.id);
   // }
 
+  // get one user by id
+  @ApiTags('API-Users')
+  @ApiResponse({
+    status: 200,
+    type: User,
+    description: 'Find one user',
+  })
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   findOne(@Param('id') id: number): Promise<User> {
     return this.usersService.findOneById(id);
   }
 
+  // update user
+  @ApiTags('API-Users')
+  @ApiBody({ type: UpdateUserDto })
+  @ApiResponse({
+    status: 200,
+    type: Boolean,
+    description: 'Update user',
+  })
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
   update(
@@ -48,6 +68,13 @@ export class UsersController {
     return this.usersService.update(id, updateUserDto);
   }
 
+  //delete user
+  @ApiTags('API-Users')
+  @ApiResponse({
+    status: 200,
+    type: Boolean,
+    description: 'Delete user',
+  })
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   remove(@Param('id') id: number): Promise<boolean> {

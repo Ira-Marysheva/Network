@@ -10,18 +10,23 @@ import {
   ManyToMany,
   JoinTable,
 } from 'typeorm';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Entity()
 export class Comment {
+  @ApiProperty()
   @PrimaryGeneratedColumn({ name: 'idComment' })
   id: number;
 
+  @ApiProperty()
   @Column()
   text: string;
 
+  @ApiProperty()
   @CreateDateColumn()
   createdAt: Date;
 
+  @ApiProperty({ nullable: true, default: 0 })
   @Column({ nullable: true, default: 0 })
   likeQty: number;
 
@@ -33,6 +38,7 @@ export class Comment {
   @JoinColumn({ name: 'idPost' })
   post: Posts;
 
+  @ApiProperty()
   @ManyToMany(() => User, (user) => user.commentLiked)
   @JoinTable({
     name: 'User_liked_comment',

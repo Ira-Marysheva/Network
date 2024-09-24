@@ -14,12 +14,22 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Comment } from './entities/comment.entity';
+import { ApiTags, ApiBody, ApiResponse, ApiQuery } from '@nestjs/swagger';
 
 @Controller('comments')
 export class CommentsController {
   constructor(private readonly commentsService: CommentsService) {}
 
   // create new comment for idPost post
+  @ApiTags('API-Comment')
+  @ApiBody({ type: CreateCommentDto })
+  @ApiResponse({
+    status: 201,
+    type: Comment,
+    description: 'Create comment',
+  })
+  @ApiQuery({ name: 'idUser', type: Number })
+  @ApiQuery({ name: 'req.user.id', type: Number })
   @Post('/post/:idPost')
   @UseGuards(JwtAuthGuard)
   create(
@@ -31,12 +41,24 @@ export class CommentsController {
   }
 
   // all comment for one post
+  @ApiTags('API-Comment')
+  @ApiResponse({
+    status: 200,
+    type: [Comment],
+    description: 'Get all comments for one post',
+  })
   @Get('/post/:idPost')
   @UseGuards(JwtAuthGuard)
   findAll(@Param('idPost') idPost: string): Promise<Comment[]> {
     return this.commentsService.findAll(+idPost);
   }
   // get one comment
+  @ApiTags('API-Comment')
+  @ApiResponse({
+    status: 200,
+    type: Comment,
+    description: 'Get one comment',
+  })
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   findOne(@Param('id') id: string): Promise<Comment> {
@@ -44,6 +66,13 @@ export class CommentsController {
   }
 
   // update exist comment in post
+  @ApiTags('API-Comment')
+  @ApiBody({ type: UpdateCommentDto })
+  @ApiResponse({
+    status: 200,
+    type: Comment,
+    description: 'Update comment',
+  })
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
   update(
@@ -54,6 +83,12 @@ export class CommentsController {
   }
 
   //delete exist comment for id in post
+  @ApiTags('API-Comment')
+  @ApiResponse({
+    status: 200,
+    type: Boolean,
+    description: 'Delete comment',
+  })
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   remove(@Param('id') id: string): Promise<boolean> {
@@ -61,6 +96,13 @@ export class CommentsController {
   }
 
   // get list who like comment
+  @ApiTags('API-Comment-Like')
+  @ApiResponse({
+    status: 200,
+    type: Comment,
+    description: 'Get list users who like comment',
+  })
+  @ApiQuery({ name: 'req.user.id', type: Number })
   @Get('like/:id')
   @UseGuards(JwtAuthGuard)
   getAllLike(@Req() req, @Param('id') id: string): Promise<Comment> {
@@ -68,12 +110,26 @@ export class CommentsController {
   }
 
   //liked
+  @ApiTags('API-Comment-Like')
+  @ApiResponse({
+    status: 200,
+    type: Comment,
+    description: 'Like comment',
+  })
+  @ApiQuery({ name: 'req.user.id', type: Number })
   @Patch('like/:id')
   @UseGuards(JwtAuthGuard)
   likePost(@Req() req, @Param('id') id: string): Promise<Comment> {
     return this.commentsService.like(+req.user.id, +id);
   }
   //delete like
+  @ApiTags('API-Comment-Like')
+  @ApiResponse({
+    status: 200,
+    type: Comment,
+    description: 'Delete like comment',
+  })
+  @ApiQuery({ name: 'req.user.id', type: Number })
   @Patch('likeDelete/:id')
   @UseGuards(JwtAuthGuard)
   deleteLikePost(@Req() req, @Param('id') id: string): Promise<Comment> {
