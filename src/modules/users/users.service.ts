@@ -6,6 +6,7 @@ import User from './entities/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { AuthAnswerDTO } from './response/index';
 
 @Injectable()
 export class UsersService {
@@ -14,14 +15,27 @@ export class UsersService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async create(createUserDto: CreateUserDto) {
+  // create new user
+  async create(createUserDto: CreateUserDto): Promise<AuthAnswerDTO> {
+    //find in exist user user with input param
     const existUser = await this.usersRepository.find({
+      select: {
+        id: true,
+        userName: true,
+        email: true,
+        gender: true,
+        createdAt: true,
+        updatedAt: true,
+      },
       where: { email: createUserDto.email },
+      relations: { comment: true, post: true },
     });
-    if (existUser.length)
-      throw new BadRequestException('User with this email already used!');
 
-    const user = await this.usersRepository.save({
+    if (existUser.length) {
+      throw new BadRequestException('User with this email already used!');
+    }
+    // create new user in DB
+    await this.usersRepository.save({
       userName: createUserDto.userName,
       email: createUserDto.email,
       password: await bcrypt.hash(createUserDto.password, 10),
@@ -29,6 +43,18 @@ export class UsersService {
       // friendList: createUserDto.friendList,
     });
 
+    //create values for authorization
+    const user = await this.usersRepository.findOne({
+      select: {
+        id: true,
+        userName: true,
+        email: true,
+        gender: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+      where: { email: createUserDto.email },
+    });
     const token = this.jwtService.sign({
       email: createUserDto.email,
     });
@@ -38,36 +64,93 @@ export class UsersService {
       token,
     };
   }
+  async findOneForAuth(email: string): Promise<User> {
+    try {
+      return await this.usersRepository.findOne({
+        where: { email },
+        relations: { post: true, comment: true },
+      });
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+  //find one user for email
+  async findOne(email: string): Promise<User> {
+    try {
+      return await this.usersRepository.findOne({
+        select: {
+          id: true,
+          userName: true,
+          email: true,
+          gender: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+        where: { email },
+        relations: { post: true, comment: true },
+      });
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
 
-  async findAll(id: number) {
-    return await this.usersRepository.find({
+  //find one user for id
+  async findOneById(id: number): Promise<User> {
+    try {
+      return await this.usersRepository.findOne({
+        select: {
+          id: true,
+          userName: true,
+          email: true,
+          gender: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+        where: { id },
+        relations: { post: true, comment: true },
+      });
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  // update exist user
+  async update(id: number, updateUserDto: UpdateUserDto): Promise<boolean> {
+    const user = await this.usersRepository.find({
+      select: {
+        id: true,
+        userName: true,
+        email: true,
+        gender: true,
+        createdAt: true,
+        updatedAt: true,
+      },
       where: { id },
-      relations: { post: true },
+      relations: { comment: true, post: true },
     });
+    if (!user.length)
+      throw new BadRequestException('User doesn`t exist it system');
+    await this.usersRepository.update(id, updateUserDto);
+    return true;
   }
 
-  async findOne(email: string) {
-    return await this.usersRepository.findOne({
-      where: { email },
-      relations: { post: true },
-    });
-  }
-  async findOneById(id: number) {
-    return await this.usersRepository.findOne({
+  //delete exist user
+  async remove(id: number): Promise<boolean> {
+    const user = await this.usersRepository.find({
+      select: {
+        id: true,
+        userName: true,
+        email: true,
+        gender: true,
+        createdAt: true,
+        updatedAt: true,
+      },
       where: { id },
-      relations: { post: true },
+      relations: { comment: true, post: true },
     });
-  }
-
-  async update(id: number, updateUserDto: UpdateUserDto) {
-    const user = await this.usersRepository.find({ where: { id } });
-    if (!user) throw new BadRequestException('User doesn`t exist it system');
-    return await this.usersRepository.update(id, updateUserDto);
-  }
-
-  async remove(id: number) {
-    const user = await this.usersRepository.find({ where: { id } });
-    if (!user) throw new BadRequestException('User doesn`t exist it system');
-    return await this.usersRepository.delete(id);
+    if (!user.length)
+      throw new BadRequestException('User doesn`t exist it system');
+    await this.usersRepository.delete(id);
+    return true;
   }
 }

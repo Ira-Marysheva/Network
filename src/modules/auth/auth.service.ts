@@ -16,12 +16,11 @@ export class AuthService {
   ) {}
 
   async validateUser(email: string, password: string) {
-    const user = await this.UserService.findOne(email);
+    const user = await this.UserService.findOneForAuth(email);
     if (!user)
       throw new BadRequestException(
         'User with this email and password doesn`t exist',
       );
-
     const comparePassword = await bcrypt.compare(password, user.password);
     if (user && comparePassword) return user;
     throw new UnauthorizedException(
@@ -36,20 +35,4 @@ export class AuthService {
       token: await this.jwtService.sign({ email, id }),
     };
   }
-
-  //   findAll() {
-  //     return `This action returns all auth`;
-  //   }
-
-  //   findOne(id: number) {
-  //     return `This action returns a #${id} auth`;
-  //   }
-
-  //   update(id: number, updateAuthDto: UpdateAuthDto) {
-  //     return `This action updates a #${id} auth`;
-  //   }
-
-  //   remove(id: number) {
-  //     return `This action removes a #${id} auth`;
-  //   }
 }
