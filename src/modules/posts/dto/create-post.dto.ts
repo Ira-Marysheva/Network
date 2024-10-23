@@ -10,4 +10,8 @@ export class CreatePostDto {
   @IsNumber()
   @IsOptional()
   likeQty?: number;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  tags: string[];
 }

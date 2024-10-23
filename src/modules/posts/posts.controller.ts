@@ -134,4 +134,12 @@ export class PostsController {
   deleteLikePost(@Req() req, @Param('id') id: string): Promise<Posts> {
     return this.postsService.deleteLike(+req.user.id, +id);
   }
+
+  // FILTER POSTS
+
+  // get all post by tag
+  // get all post by data created
+  // det all post by like quantity
+  
+
 }

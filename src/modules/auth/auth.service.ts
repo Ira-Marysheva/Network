@@ -35,4 +35,15 @@ export class AuthService {
       token: await this.jwtService.sign({ email, id }),
     };
   }
+  async logout({id, email}, token: string):Promise<void>{
+    try {
+      if(id && email && token){
+        id = null
+        email = null
+        token = null
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
 }
