@@ -121,4 +121,39 @@ export class PostsService {
     }
     throw new BadRequestException('something happening wrong');
   }
+
+
+  // filter function for search post
+  async filterTextPost(keyWord:string){
+    try {
+      const word = keyWord.split(' ')
+      return this.postRepository.createQueryBuilder('post').where('post.text ILIKE :word', {word: `%${word[0]}%`}).getMany()
+    } catch (error) {
+      console.log(error)  
+    }
+  }
+  // filter function for search post for date created
+  async filterDatePost(startDate:Date, endDate:Date):Promise<Posts[]>{
+    let findedPosts = []
+    if (startDate && endDate){
+      console.log('here')
+      findedPosts = await this.postRepository.createQueryBuilder('post').where('post.timeCteated >= :startDate AND post.timeCteated <= :endDate', {startDate:`${startDate} 00:00:00.000`, endDate: `${endDate} 23:59:59.999`}).getMany()
+    }else if (startDate){
+      findedPosts =await this.postRepository.createQueryBuilder('post').where('post.timeCteated >= :startDate', {startDate:`${startDate} 00:00:00.000`}).getMany()
+    }else if (endDate){
+      findedPosts = await this.postRepository.createQueryBuilder('post').where('post.timeCteated <= :endDate', {endDate:`${endDate} 23:59:59.999`}).getMany()
+    }else{
+      throw new BadRequestException('Please enter at least one date in one of the parameters')
+    }
+    console.log(startDate, endDate)
+    return findedPosts
+  }
+
+  // filter(sorting) post for like quantity
+  async filterLikePost():Promise<Posts[]>{
+    return await this.postRepository.createQueryBuilder('post')
+    .orderBy('post.likeQty', 'DESC') 
+    .getMany();
+  }
 }
+

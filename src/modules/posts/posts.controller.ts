@@ -15,10 +15,56 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Posts } from './entities/post.entity';
 import { ApiTags, ApiResponse, ApiQuery, ApiBody } from '@nestjs/swagger';
+import filterDataPostDto from './dto/filter-post.dto';
+
 
 @Controller('posts')
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
+  
+  // FILTER POSTS
+  
+  // get all post by text in post
+  @ApiTags('API-Post-Filter')
+  @ApiResponse({
+    status: 200,
+    type: Posts,
+    description: 'Get all post by text',
+  })
+  @ApiQuery({ name: 'keyWord', type: String })
+  @Get('filter-text-post') 
+  @UseGuards(JwtAuthGuard)
+  getFilterTextPost(@Body('keyWord') keyWord:string):Promise<Posts[]> {
+    return this.postsService.filterTextPost(keyWord)
+  }
+  
+  // get all post by data created
+  @ApiTags('API-Post-Filter')
+  @ApiResponse({
+    status: 200,
+    type: Posts,
+    description: 'Get all post by data created',
+  })
+  @ApiBody({ type: filterDataPostDto })
+  @Get('filter-date-post')
+  @UseGuards(JwtAuthGuard)
+  getFlterDataPost(@Body() filterDataPost: filterDataPostDto):Promise<Posts[]>{
+    const {startDate, endDate} = filterDataPost
+    return this.postsService.filterDatePost(startDate, endDate)
+  }
+
+  // get all post by like quantity
+  @ApiTags('API-Post-Filter')
+  @ApiResponse({
+    status: 200,
+    type: Posts,
+    description: 'get all post by like quantity(sorting)',
+  })
+  @Get('filter-like-post')
+  @UseGuards(JwtAuthGuard)
+  getFilterLikePost():Promise<Posts[]> {
+    return this.postsService.filterLikePost()
+  }
 
   @ApiTags('API-Post')
   @ApiBody({ type: CreatePostDto })
@@ -33,7 +79,7 @@ export class PostsController {
   create(@Req() req, @Body() createPostDto: CreatePostDto): Promise<Posts> {
     return this.postsService.create(+req.user.id, createPostDto);
   }
-
+  
   // get all users post
   @ApiTags('API-Post')
   @ApiResponse({
@@ -92,8 +138,7 @@ export class PostsController {
     return this.postsService.remove(+id);
   }
 
-  // like post logic
-
+  // LIKE POST LOGIC
   // get list who like post
   @ApiTags('API-Post-Like')
   @ApiResponse({
@@ -134,4 +179,7 @@ export class PostsController {
   deleteLikePost(@Req() req, @Param('id') id: string): Promise<Posts> {
     return this.postsService.deleteLike(+req.user.id, +id);
   }
+
+  
+
 }

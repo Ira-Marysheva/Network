@@ -14,7 +14,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { AuthAnswerDTO } from './response';
 import User from './entities/user.entity';
-import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiResponse, ApiTags} from '@nestjs/swagger';
 
 @Controller('users')
 export class UsersController {
