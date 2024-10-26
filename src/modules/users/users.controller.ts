@@ -79,5 +79,5 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   remove(@Param('id') id: number): Promise<boolean> {
     return this.usersService.remove(id);
-  }
+  }  
 }
