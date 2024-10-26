@@ -8,6 +8,7 @@ import { PostsModule } from '../posts/posts.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import ConfigFile from '../../configurations/index';
+import { UploadModule } from 'src/upload/upload.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import ConfigFile from '../../configurations/index';
     AuthModule,
     CommentsModule,
     PostsModule,
+    UploadModule,
     ConfigModule.forRoot({ load: [ConfigFile], isGlobal: true }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
