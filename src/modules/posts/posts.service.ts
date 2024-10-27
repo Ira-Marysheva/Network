@@ -13,11 +13,12 @@ export class PostsService {
     private readonly usersService: UsersService,
   ) {}
   //create new post
-  async create(id: number, createPostDto: CreatePostDto): Promise<Posts> {
+  async create(id: number, createPostDto:CreatePostDto, fileUrl:string = '*'): Promise<Posts> {
     try {
       return await this.postRepository.save({
         text: createPostDto.text,
         likeQty: createPostDto.likeQty,
+        postPhotoUrl:fileUrl,
         user: { id },
       });
     } catch (error) {
@@ -55,6 +56,14 @@ export class PostsService {
     if (!post.length) throw new BadRequestException('This post not exist!');
     await this.postRepository.update(id, updatePostDto);
     return true;
+  }
+
+  // update(add) url for post photo
+  async updatePostUrl(id:number, fileUrl:string):Promise<boolean>{
+    const post = await this.postRepository.findOne({where:{id}})
+    if (!post) throw new BadRequestException('This post not exist!');
+    await this.postRepository.update(id, {postPhotoUrl:fileUrl})
+    return true
   }
 
   // delete exist users post
@@ -96,7 +105,6 @@ export class PostsService {
       throw new BadRequestException(
         'This post not exist or user already liked!',
       );
-    console.log(post);
     return post;
   }
   // like login user post
@@ -136,7 +144,7 @@ export class PostsService {
   async filterDatePost(startDate:Date, endDate:Date):Promise<Posts[]>{
     let findedPosts = []
     if (startDate && endDate){
-      console.log('here')
+
       findedPosts = await this.postRepository.createQueryBuilder('post').where('post.timeCteated >= :startDate AND post.timeCteated <= :endDate', {startDate:`${startDate} 00:00:00.000`, endDate: `${endDate} 23:59:59.999`}).getMany()
     }else if (startDate){
       findedPosts =await this.postRepository.createQueryBuilder('post').where('post.timeCteated >= :startDate', {startDate:`${startDate} 00:00:00.000`}).getMany()
@@ -145,7 +153,6 @@ export class PostsService {
     }else{
       throw new BadRequestException('Please enter at least one date in one of the parameters')
     }
-    console.log(startDate, endDate)
     return findedPosts
   }
 

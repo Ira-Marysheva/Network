@@ -54,4 +54,8 @@ export class Posts {
     inverseJoinColumn: { name: 'userId', referencedColumnName: 'id' },
   })
   userLiked: User[];
+
+  @ApiProperty()
+  @Column({default:'*'})
+  postPhotoUrl:string
 }
