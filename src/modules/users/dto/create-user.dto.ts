@@ -19,6 +19,9 @@ export class CreateUserDto {
   @IsNotEmpty()
   gender: 'man' | 'woman' | 'not answered';
 
+  @ApiProperty({enum:['admin', 'user']})
+  roles: 'admin' | 'user';
+  
   // @IsOptional()
   // friendList?: string;
 }
