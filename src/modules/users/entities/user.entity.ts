@@ -27,6 +27,10 @@ export default class User {
   @Column()
   gender: string; //   gender: 'man' | 'woman' | 'not answered';
 
+  @ApiProperty()
+  @Column({default:'user'})
+  roles: string;
+
   @ApiProperty({ uniqueItems: true })
   @Column({ unique: true })
   email: string;
