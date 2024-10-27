@@ -8,6 +8,8 @@ import {
   Delete,
   UseGuards,
   Req,
+  UseInterceptors,
+  UploadedFile
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -16,6 +18,9 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Posts } from './entities/post.entity';
 import { ApiTags, ApiResponse, ApiQuery, ApiBody } from '@nestjs/swagger';
 import filterDataPostDto from './dto/filter-post.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/roles.decorator';
 
 
 @Controller('posts')
@@ -66,6 +71,7 @@ export class PostsController {
     return this.postsService.filterLikePost()
   }
 
+  // create post 
   @ApiTags('API-Post')
   @ApiBody({ type: CreatePostDto })
   @ApiResponse({
@@ -75,9 +81,12 @@ export class PostsController {
   })
   @ApiQuery({ name: 'req.user.id', type: Number })
   @Post()
-  @UseGuards(JwtAuthGuard)
-  create(@Req() req, @Body() createPostDto: CreatePostDto): Promise<Posts> {
-    return this.postsService.create(+req.user.id, createPostDto);
+  @Roles(['user'])
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseInterceptors(FileInterceptor('file'))
+  create(@UploadedFile() file, @Req() req, @Body() createPostDto: CreatePostDto): Promise<Posts> {
+    const fileUrl = `http://localhost:3000/uploads/${file.filename}`;
+    return this.postsService.create(+req.user.id, createPostDto, fileUrl);
   }
   
   // get all users post
@@ -180,6 +189,20 @@ export class PostsController {
     return this.postsService.deleteLike(+req.user.id, +id);
   }
 
-  
-
+  //  UPDATE UPLOAD IMAGE POST FOR ID
+  @ApiTags('API-Post-Image')
+  @ApiResponse({
+    status: 200,
+    type: Posts,
+    description: 'Update upload image to user post',
+  })
+  @Roles(['user'])
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Post('/uploadImage/:id')
+  @UseInterceptors(FileInterceptor('file'))
+  async updateUploadImage(@UploadedFile() file, @Param('id') id:string):Promise<boolean> {
+    const fileUrl = `http://localhost:3000/uploads/${file.filename}`; 
+    return this.postsService.updatePostUrl(+id,fileUrl) 
+  }
+    
 }

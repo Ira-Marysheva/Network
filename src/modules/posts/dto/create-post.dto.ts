@@ -10,4 +10,9 @@ export class CreatePostDto {
   @IsNumber()
   @IsOptional()
   likeQty?: number;
+
+  @ApiProperty({ required: false })
+  @IsString()
+  @IsOptional()
+  postPhotoUrl?: string;
 }

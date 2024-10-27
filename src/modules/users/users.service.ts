@@ -16,7 +16,7 @@ export class UsersService {
   ) {}
 
   // create new user
-  async create(createUserDto: CreateUserDto): Promise<AuthAnswerDTO> {
+  async create(createUserDto: CreateUserDto, fileUrl:string): Promise<AuthAnswerDTO> {
     //find in exist user user with input param
     const existUser = await this.usersRepository.find({
       select: {
@@ -27,6 +27,7 @@ export class UsersService {
         createdAt: true,
         updatedAt: true,
         roles: true,
+        userPhotoUrl:true
       },
       where: { email: createUserDto.email },
       relations: { comment: true, post: true },
@@ -41,7 +42,8 @@ export class UsersService {
       email: createUserDto.email,
       password: await bcrypt.hash(createUserDto.password, 10),
       gender: createUserDto.gender,
-      role:createUserDto.roles
+      role:createUserDto.roles,
+      userPhotoUrl:fileUrl
       // friendList: createUserDto.friendList,
     });
 
@@ -54,6 +56,7 @@ export class UsersService {
         gender: true,
         createdAt: true,
         updatedAt: true,
+        userPhotoUrl:true
       },
       where: { email: createUserDto.email },
     });
@@ -76,6 +79,7 @@ export class UsersService {
       throw new Error(error);
     }
   }
+
   //find one user for email
   async findOne(email: string): Promise<User> {
     try {
@@ -133,6 +137,27 @@ export class UsersService {
     if (!user.length)
       throw new BadRequestException('User doesn`t exist it system');
     await this.usersRepository.update(id, updateUserDto);
+    return true;
+  }
+
+  // update photo user
+  async updatePostUrl(id:number, fileUrl:string):Promise<boolean>{
+    const user = await this.usersRepository.find({
+      select: {
+        id: true,
+        userName: true,
+        email: true,
+        gender: true,
+        createdAt: true,
+        updatedAt: true,
+        userPhotoUrl:true
+      },
+      where: { id },
+      relations: { comment: true, post: true },
+    });
+    if (!user.length)
+      throw new BadRequestException('User doesn`t exist it system');
+    await this.usersRepository.update(id, {userPhotoUrl:fileUrl});
     return true;
   }
 
