@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
   UseGuards,
+  UseInterceptors,
+  UploadedFile
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -17,6 +19,7 @@ import User from './entities/user.entity';
 import { ApiBody, ApiResponse, ApiTags} from '@nestjs/swagger';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from "../auth/roles.decorator";
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('users')
 export class UsersController {
@@ -30,8 +33,10 @@ export class UsersController {
     description: 'Create new user',
   })
   @Post()
-  create(@Body() createUserDto: CreateUserDto): Promise<AuthAnswerDTO> {
-    return this.usersService.create(createUserDto);
+  @UseInterceptors(FileInterceptor('file'))
+  create(@UploadedFile() file, @Body() createUserDto: CreateUserDto): Promise<AuthAnswerDTO> {
+    const fileUrl = `http://localhost:3000/uploads/${file.filename}`;
+    return this.usersService.create(createUserDto, fileUrl);
   }
 
   // @Get()
@@ -48,7 +53,6 @@ export class UsersController {
     description: 'Find one user',
   })
   @Get(':id')
-  @Roles(['admin'])
   @UseGuards(JwtAuthGuard)
   findOne(@Param('id') id: number): Promise<User> {
     return this.usersService.findOneById(id);
@@ -79,8 +83,25 @@ export class UsersController {
     description: 'Delete user',
   })
   @Delete(':id')
+  @Roles(['admin'])
   @UseGuards(JwtAuthGuard, RolesGuard)
   remove(@Param('id') id: number): Promise<boolean> {
     return this.usersService.remove(id);
   }  
+
+  //  UPDATE UPLOAD IMAGE POST FOR ID
+  @ApiTags('API-Post-Image')
+  @ApiResponse({
+    status: 200,
+    type: User,
+    description: 'Update upload image to user post',
+  })
+  @Roles(['user'])
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Post('/uploadImage/:id')
+  @UseInterceptors(FileInterceptor('file'))
+  async updateUploadImage(@UploadedFile() file, @Param('id') id:string):Promise<boolean> {
+    const fileUrl = `http://localhost:3000/uploads/${file.filename}`; 
+    return this.usersService.updatePostUrl(+id,fileUrl) 
+  }
 }

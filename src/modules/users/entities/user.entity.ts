@@ -72,4 +72,8 @@ export default class User {
   @ApiProperty()
   @ManyToMany(() => Comment, (comment) => comment.userLiked)
   commentLiked: Comment[];
+
+  @ApiProperty()
+  @Column({default:'*'})
+  userPhotoUrl:string
 }
