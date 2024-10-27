@@ -26,6 +26,7 @@ export class UsersService {
         gender: true,
         createdAt: true,
         updatedAt: true,
+        roles: true,
       },
       where: { email: createUserDto.email },
       relations: { comment: true, post: true },
@@ -40,6 +41,7 @@ export class UsersService {
       email: createUserDto.email,
       password: await bcrypt.hash(createUserDto.password, 10),
       gender: createUserDto.gender,
+      role:createUserDto.roles
       // friendList: createUserDto.friendList,
     });
 

@@ -15,6 +15,8 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { AuthAnswerDTO } from './response';
 import User from './entities/user.entity';
 import { ApiBody, ApiResponse, ApiTags} from '@nestjs/swagger';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from "../auth/roles.decorator";
 
 @Controller('users')
 export class UsersController {
@@ -46,6 +48,7 @@ export class UsersController {
     description: 'Find one user',
   })
   @Get(':id')
+  @Roles(['admin'])
   @UseGuards(JwtAuthGuard)
   findOne(@Param('id') id: number): Promise<User> {
     return this.usersService.findOneById(id);
@@ -76,8 +79,8 @@ export class UsersController {
     description: 'Delete user',
   })
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   remove(@Param('id') id: number): Promise<boolean> {
     return this.usersService.remove(id);
-  }
+  }  
 }

@@ -7,6 +7,7 @@ import { LoginUserDto } from './dto/LoginUserDto';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { Roles } from './roles.decorator';
 
 @Injectable()
 export class AuthService {
@@ -28,19 +29,21 @@ export class AuthService {
     );
   }
   async login(user: LoginUserDto) {
-    const { email, id } = user;
+    const { email, id, roles } = user;
     return {
       email,
       id,
-      token: await this.jwtService.sign({ email, id }),
+      roles,
+      token: await this.jwtService.sign({ email, id, roles }),
     };
   }
-  async logout({id, email}, token: string):Promise<void>{
+  async logout({id, email, roles}, token: string):Promise<void>{
     try {
-      if(id && email && token){
+      if(id && email && token  && roles){
         id = null
         email = null
-        token = null
+        token = null,
+        roles = null
       }
     } catch (error) {
       console.log(error)
