@@ -1,4 +1,4 @@
-import { Controller, Post, Get, UseGuards, Req } from '@nestjs/common';
+import { Controller, Post, Get, UseGuards, Req, Body, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { ApiTags, ApiResponse, ApiQuery } from '@nestjs/swagger';
@@ -18,9 +18,10 @@ export class AuthController {
   })
   @ApiQuery({ name: 'req.user', type: LoginUserDto })
   @Post('login')
-  login(@Req() req) {
-    return this.authService.login(req.user);
+  login(@Res({passthrough:true}) res, @Body() loginUserDto: LoginUserDto) {
+    return this.authService.login(res, loginUserDto);
   }
+
   @UseGuards(JwtAuthGuard)
   @ApiTags('API-Authorization')
   @ApiResponse({
@@ -29,7 +30,8 @@ export class AuthController {
     description: 'Log out',
   })
   @Get('logout')
-  logout(@Req() req):Promise<void> {
+  logout(@Req() req, @Res({passthrough:true}) res):Promise<void> {
+    res.clearCookie('token_cookies');
     return this.authService.logout(req.user,req.headers.authorization);
   }
 
