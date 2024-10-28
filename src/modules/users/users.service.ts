@@ -32,7 +32,6 @@ export class UsersService {
       where: { email: createUserDto.email },
       relations: { comment: true, post: true },
     });
-
     if (existUser.length) {
       throw new BadRequestException('User with this email already used!');
     }
@@ -42,7 +41,7 @@ export class UsersService {
       email: createUserDto.email,
       password: await bcrypt.hash(createUserDto.password, 10),
       gender: createUserDto.gender,
-      role:createUserDto.roles,
+      roles:createUserDto.roles,
       userPhotoUrl:fileUrl
       // friendList: createUserDto.friendList,
     });
@@ -56,12 +55,16 @@ export class UsersService {
         gender: true,
         createdAt: true,
         updatedAt: true,
-        userPhotoUrl:true
+        userPhotoUrl:true,
+        roles: true,
       },
       where: { email: createUserDto.email },
     });
     const token = this.jwtService.sign({
-      email: createUserDto.email,
+      email: user.email,
+      username: user.userName, 
+      id: user.id, 
+      roles:user.roles 
     });
 
     return {
@@ -91,6 +94,7 @@ export class UsersService {
           gender: true,
           createdAt: true,
           updatedAt: true,
+          roles:true
         },
         where: { email },
         relations: { post: true, comment: true },
@@ -111,6 +115,7 @@ export class UsersService {
           gender: true,
           createdAt: true,
           updatedAt: true,
+          roles:true
         },
         where: { id },
         relations: { post: true, comment: true },
@@ -130,6 +135,7 @@ export class UsersService {
         gender: true,
         createdAt: true,
         updatedAt: true,
+        roles:true
       },
       where: { id },
       relations: { comment: true, post: true },
@@ -150,7 +156,8 @@ export class UsersService {
         gender: true,
         createdAt: true,
         updatedAt: true,
-        userPhotoUrl:true
+        userPhotoUrl:true,
+        roles:true
       },
       where: { id },
       relations: { comment: true, post: true },
@@ -171,6 +178,7 @@ export class UsersService {
         gender: true,
         createdAt: true,
         updatedAt: true,
+        roles:true
       },
       where: { id },
       relations: { comment: true, post: true },

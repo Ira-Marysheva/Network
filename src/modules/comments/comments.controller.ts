@@ -48,7 +48,7 @@ export class CommentsController {
     description: 'Get all comments for one post',
   })
   @Get('/post/:idPost')
-  @UseGuards(JwtAuthGuard)
+  // @s(JwtAuthGuard)
   findAll(@Param('idPost') idPost: string): Promise<Comment[]> {
     return this.commentsService.findAll(+idPost);
   }

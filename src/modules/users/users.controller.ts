@@ -90,7 +90,7 @@ export class UsersController {
   }  
 
   //  UPDATE UPLOAD IMAGE POST FOR ID
-  @ApiTags('API-Post-Image')
+  @ApiTags('API-Users')
   @ApiResponse({
     status: 200,
     type: User,

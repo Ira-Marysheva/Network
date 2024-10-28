@@ -4,13 +4,9 @@ import { IsNotEmpty, IsOptional } from 'class-validator';
 export class LoginUserDto {
   @ApiProperty()
   @IsNotEmpty()
-  id: number;
+  password: string;
 
   @ApiProperty()
   @IsNotEmpty()
   email: string;
-
-  @ApiProperty()
-  @IsOptional()
-  roles?: string[];
 }

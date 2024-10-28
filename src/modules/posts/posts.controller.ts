@@ -190,7 +190,7 @@ export class PostsController {
   }
 
   //  UPDATE UPLOAD IMAGE POST FOR ID
-  @ApiTags('API-Post-Image')
+  @ApiTags('API-Post')
   @ApiResponse({
     status: 200,
     type: Posts,
