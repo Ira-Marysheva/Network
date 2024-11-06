@@ -8,6 +8,7 @@ import { PostsModule } from '../posts/posts.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import ConfigFile from '../../configurations/index';
+import { EmailModule } from 'src/modules/email/email.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import ConfigFile from '../../configurations/index';
     AuthModule,
     CommentsModule,
     PostsModule,
+    EmailModule,
     ConfigModule.forRoot({ load: [ConfigFile], isGlobal: true }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -30,7 +32,7 @@ import ConfigFile from '../../configurations/index';
         autoLoadEntities: true,
       }),
       inject: [ConfigService],
-    }),
+    })
   ],
   controllers: [AppController],
   providers: [AppService],

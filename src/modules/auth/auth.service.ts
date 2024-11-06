@@ -59,4 +59,34 @@ export class AuthService {
       console.log(error)
     }
   }
+
+  async confirmUser(token:string):Promise<string>{
+    try {
+      const arrayToken = token.split('.')
+      const tokenPlayload = JSON.parse(atob(arrayToken[1]))
+      const user = await this.UsersService.findOneForAuth(tokenPlayload.email)
+      if(!user){
+        throw new BadRequestException('This url is not valid! Please sign in again.')
+      }
+      return `It is ok! Your email is ${user.email} and your nikname is ${user.userName}. We happy to see you in our platform.`
+    } catch (error) {
+      console.log(error)
+      throw new BadRequestException('Somsing went wrong! Please try again later.')
+    }
+  }
+
+  async deleteConfirm(token:String):Promise<String>{
+    try {
+      const arrayToken = token.split('.')
+      const tokenPlayload = JSON.parse(atob(arrayToken[1]))
+      const user = await this.UsersService.findOneForAuth(tokenPlayload.email)
+      if(user){
+        await this.UsersService.remove(+user.id)
+      }
+      return `This account successfully was deleted!`
+    } catch (error) {
+      console.log(error)
+      throw new BadRequestException('Somsing went wrong! Please try again later.')
+    }
+  }
 }
