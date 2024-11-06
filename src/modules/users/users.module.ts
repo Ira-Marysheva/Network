@@ -8,6 +8,7 @@ import { extname, join } from 'path';
 import { MulterModule } from '@nestjs/platform-express';
 import{ diskStorage } from 'multer';
 import User from './entities/user.entity';
+import { EmailModule } from '../email/email.module';
 
 // create 'uploads' file to root
 const uploadDir = join(process.cwd(), 'upload');
@@ -45,6 +46,7 @@ const uploadDir = join(process.cwd(), 'upload');
       }),
       inject: [ConfigService],
     }),
+    EmailModule
   ],
   controllers: [UsersController],
   providers: [UsersService],

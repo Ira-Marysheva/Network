@@ -7,32 +7,34 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { AuthAnswerDTO } from './response/index';
+import { EmailService } from '../email/email.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly usersRepository: Repository<User>,
     private readonly jwtService: JwtService,
+    private emailService: EmailService
   ) {}
 
   // create new user
   async create(createUserDto: CreateUserDto, fileUrl:string): Promise<AuthAnswerDTO> {
     //find in exist user user with input param
-    const existUser = await this.usersRepository.find({
-      select: {
-        id: true,
-        userName: true,
-        email: true,
-        gender: true,
-        createdAt: true,
-        updatedAt: true,
-        roles: true,
-        userPhotoUrl:true
-      },
+    const existUser = await this.usersRepository.findOne({
+      // select: {
+      //   id: true,
+      //   userName: true,
+      //   email: true,
+      //   gender: true,
+      //   createdAt: true,
+      //   updatedAt: true,
+      //   roles: true,
+      //   userPhotoUrl:true
+      // },
       where: { email: createUserDto.email },
       relations: { comment: true, post: true },
     });
-    if (existUser.length) {
+    if (existUser) {
       throw new BadRequestException('User with this email already used!');
     }
     // create new user in DB
@@ -60,12 +62,15 @@ export class UsersService {
       },
       where: { email: createUserDto.email },
     });
+
     const token = this.jwtService.sign({
       email: user.email,
       username: user.userName, 
       id: user.id, 
       roles:user.roles 
     });
+
+    this.emailService.sendUserConfirnation( user.email, user.userName , token)
 
     return {
       user,
