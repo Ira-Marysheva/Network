@@ -1,8 +1,6 @@
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
+  <img src='https://static.vecteezy.com/system/resources/previews/007/955/143/large_2x/network-logo-free-vector.jpg'>
 </p>
-
-[circleci-image] https://static.vecteezy.com/system/resources/previews/007/955/143/large_2x/network-logo-free-vector.jpg
 
   <p align="center"><b>Network</b> is a powerful project designed to create your own RESTful API, allowing developers to quickly and efficiently build social networks with posts, users, and comments.</p>
 
@@ -34,30 +32,34 @@
 
 ## Getting Started
 <ol type="1">
-  <li>Clone the repository:</li>
+  <li>Clone the repository:
 
-```bash
-$ git clone https://github.com/Ira-Marysheva/Network.git
-```
+    ```bash
+    $ git clone https://github.com/Ira-Marysheva/Network.git
+    ```
+  <li>
 
-  <li>Install the dependencies:</li>
+  <li>Install the dependencies:
 
-```bash
-cd Network
-npm install
-```
+  ```bash
+  cd Network
+  npm install
+  ```
+  </li>
 
-  <li>Configure the database settings in the .env file and run Docker-compose.</li>
+  <li>Configure the database settings in the .env file and run Docker-compose.
 
-```bash
-docker-compose up
-```
+  ```bash
+  docker-compose up
+  ```
+  </li>
 
-<li>Start the server:</li>
+  <li>Start the server:
 
-```bash
-npm run start
-```
+  ```bash
+  npm run start
+  ```
+  </li>
 <ol>
 
 
