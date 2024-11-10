@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
+  <a target="blank"><img src="https://static.vecteezy.com/system/resources/previews/007/955/143/non_2x/network-logo-free-vector.jpg" width="120" alt="Network Logo" /></a>
 </p>
 
 [circleci-image] https://static.vecteezy.com/system/resources/previews/007/955/143/large_2x/network-logo-free-vector.jpg
@@ -58,7 +58,7 @@ docker-compose up
 ```bash
 npm run start
 ```
-<ol>
+</ol>
 
 
 ## Usage
