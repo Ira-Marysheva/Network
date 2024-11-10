@@ -1,5 +1,5 @@
 <p align="center">
-  <img src='https://static.vecteezy.com/system/resources/previews/007/955/143/large_2x/network-logo-free-vector.jpg'>
+  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
 </p>
 
   <p align="center"><b>Network</b> is a powerful project designed to create your own RESTful API, allowing developers to quickly and efficiently build social networks with posts, users, and comments.</p>
@@ -56,10 +56,9 @@
 
   <li>Start the server:
 
-  ```bash
-  npm run start
-  ```
-  </li>
+```bash
+npm run start
+```
 <ol>
 
 
