@@ -3,34 +3,62 @@
 </p>
 
 [circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+  <p align="center"><b>Network</b> is a powerful project designed to create your own RESTful API, allowing developers to quickly and efficiently build social networks with posts, users, and comments.</p>
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+<p>This project provides a flexible architecture for building a social network where users can create, edit, and delete posts, as well as leave comments on them. By utilizing modern technologies such as Node.js and TypeScript, you can easily adapt the project to meet your needs.</p>
 
-## Project setup
+## Key Features
 
+<ul>
+  <li>Users: Registration, authentication, and profile management.</li>
+  <li>Posts: Create, edit, and delete posts, with the ability to add images.</li>
+  <li>Comments: Add comments to posts, with options to edit and delete.</li>
+  <li>Likes: Users can like posts and comments, enhancing platform interactivity.</li>
+  <li>Filtering: Ability to filter posts by creation date, number of likes, and text.</li>
+  <li>Email Notifications: Users receive email notifications for important actions, such as account confirmation and updates.</li>
+  <li>Swagger Documentation: Automatically generated API documentation to facilitate integration and testing.</li>
+</ul>
+
+## Technologies
+<p>The project is implemented using:</p>
+<ul>
+  <li>Node.js: for building the server-side.</li>
+  <li>TypeScript: for type safety and improved code quality.</li>
+  <li>NestJS: for building a structured and scalable API.</li>
+  <li>PostgreSQL: for data storage.</li>
+  <li>TypeORM: for database interaction.</li>
+</ul>
+
+## Getting Started
+<ol type="1">
+  <li>Clone the repository:</li>
 ```bash
-$ npm install
+$ git clone https://github.com/Ira-Marysheva/Network.git
 ```
+
+  <li>Install the dependencies:</li>
+```bash
+cd Network
+npm install
+```
+
+  <li>Configure the database settings in the .env file and run Docker-compose.</li>
+```bash
+docker-compose up
+```
+
+<li>Start the server:>
+```bash
+npm run start
+```
+
+<ol>
+
+## Usage
+<p>After starting the server, you can use the Swagger UI to test the API by navigating to http://localhost:3000/api.</p>
 
 ## Compile and run the project
 
@@ -45,41 +73,10 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
-## Run tests
+## Contact
 
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+If you have any questions or suggestions, please reach out to me at 380934581587a@gmail.com
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+<p>This project is licensed under the MIT License.</p>
