@@ -32,7 +32,7 @@ import { EmailModule } from 'src/modules/email/email.module';
         autoLoadEntities: true,
       }),
       inject: [ConfigService],
-    })
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],

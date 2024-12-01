@@ -5,8 +5,10 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { join } from 'path';
 import { existsSync, mkdirSync } from 'fs';
 import * as cookieParser from 'cookie-parser';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
+  
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe()); // it iw need for use pipe decorator @IsString/IsNumber.. in local object DTO
   app.setGlobalPrefix('api');
@@ -30,5 +32,17 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   await app.listen(3000);
+
+  const emailMicroservice = app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.RMQ,
+    options:{
+      urls:['amqp://localhost:5672'],
+      queue:'registered_queue', // need add new queue 'updateUser_queue'
+      queueOptions: {
+        durable: false
+      },
+    },
+  })
+  await emailMicroservice.listen()
 }
 bootstrap();

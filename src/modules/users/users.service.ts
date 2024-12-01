@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -8,32 +8,21 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { AuthAnswerDTO } from './response/index';
 import { EmailService } from '../email/email.service';
+import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly usersRepository: Repository<User>,
     private readonly jwtService: JwtService,
-    private emailService: EmailService
+    // private emailService: EmailService,
+    @Inject('USER_EMAIL_SERVISE') private readonly rabbitClient: ClientProxy
   ) {}
 
   // create new user
   async create(createUserDto: CreateUserDto, fileUrl:string): Promise<AuthAnswerDTO> {
     //find in exist user user with input param
-    const existUser = await this.usersRepository.findOne({
-      // select: {
-      //   id: true,
-      //   userName: true,
-      //   email: true,
-      //   gender: true,
-      //   createdAt: true,
-      //   updatedAt: true,
-      //   roles: true,
-      //   userPhotoUrl:true
-      // },
-      where: { email: createUserDto.email },
-      relations: { comment: true, post: true },
-    });
+    const existUser = await this.usersRepository.findOne({where: { email: createUserDto.email }});
     if (existUser) {
       throw new BadRequestException('User with this email already used!');
     }
@@ -70,11 +59,14 @@ export class UsersService {
       roles:user.roles 
     });
 
-    this.emailService.sendUserConfirnation( user.email, user.userName , token)
+    // start working rabbitClient when user was created
+    this.rabbitClient.emit('user_created', {user, token})
 
+    // this.emailService.sendUserConfirnation( user.email, user.userName , token)
+    console.log('User was successfully registrated')
     return {
       user,
-      token,
+      token
     };
   }
   async findOneForAuth(email: string): Promise<User> {
