@@ -8,7 +8,8 @@ import { extname, join } from 'path';
 import { MulterModule } from '@nestjs/platform-express';
 import{ diskStorage } from 'multer';
 import User from './entities/user.entity';
-import { EmailModule } from '../email/email.module';
+// import { EmailModule } from '../email/email.module';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 // create 'uploads' file to root
 const uploadDir = join(process.cwd(), 'upload');
@@ -46,7 +47,20 @@ const uploadDir = join(process.cwd(), 'upload');
       }),
       inject: [ConfigService],
     }),
-    EmailModule
+    // for RabitMQ import
+    ClientsModule.register([
+      {
+        name:'USER_EMAIL_SERVISE',
+        transport: Transport.RMQ,
+        options:{
+          urls:['amqp://localhost:5672'],
+          queue:'registered_queue', // need add new queue 'updateUser_queue'
+          queueOptions: {
+            durable: false
+          },
+        },
+      }
+    ]),
   ],
   controllers: [UsersController],
   providers: [UsersService],
